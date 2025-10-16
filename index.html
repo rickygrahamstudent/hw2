@@ -1,1 +1,97 @@
-hello world! 
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #000000;
+            }
+            #canvas-container {
+               width: 500px;
+               height: 400px;
+            }
+    </style>
+</head>
+
+  
+<body>
+    <div id="canvas-container"></div>
+    <script>
+        new p5(function(p) {
+            var x = 100;
+            var y = 300;
+            var blockWidth = 40;
+            var blockHeight = 40;
+            var velocityY = 0;
+            var gravity = 0.8;
+            var jumpForce = -15;
+            var moveSpeed = 5;
+            var isJumping = false;
+            var groundY = 350;
+            var platformHeight = 20;
+            var upperPlatformX = 250;
+            var upperPlatformY = 250;
+            var upperPlatformWidth = 150;
+
+            p.setup = function() {
+                p.createCanvas(500, 400);
+            };
+
+            p.draw = function() {
+                p.background(135, 206, 235);
+                velocityY = velocityY + gravity;
+                y = y + velocityY;
+
+                if (p.keyIsPressed) {
+                    if (p.key == 'a' || p.key == 'A') {
+                        x = x - moveSpeed;
+                    }
+                    if (p.key == 'd' || p.key == 'D') {
+                        x = x + moveSpeed;
+                    }
+                }
+
+                x = p.constrain(x, 0, p.width - blockWidth);
+
+                if (y + blockHeight >= groundY && velocityY > 0) {
+                    y = groundY - blockHeight;
+                    velocityY = 0;
+                    isJumping = false;
+                }
+
+                if (velocityY > 0 && x + blockWidth > upperPlatformX && x < upperPlatformX + upperPlatformWidth && y + blockHeight >= upperPlatformY && y + blockHeight < upperPlatformY + platformHeight) {
+                    y = upperPlatformY - blockHeight;
+                    velocityY = 0;
+                    isJumping = false;
+                }
+
+                p.fill(100, 200, 100);
+                p.rect(0, groundY, p.width, platformHeight);
+
+                p.fill(150, 100, 200);
+                p.rect(upperPlatformX, upperPlatformY, upperPlatformWidth, platformHeight);
+
+                p.fill(255, 100, 100);
+                p.rect(x, y, blockWidth, blockHeight);
+
+                p.fill(0);
+                p.textSize(14);
+                p.text("A/D to move, SPACE to jump", 10, 20);
+            };
+
+            p.keyPressed = function() {
+                if (p.key == ' ' && !isJumping) {
+                    velocityY = jumpForce;
+                    isJumping = true;
+                }
+            };
+        }, 'canvas-container');
+    </script>
+</body>
+</html>
